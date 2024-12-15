@@ -3,6 +3,7 @@ import TrashIcon from '../icons/TrashIcon';
 import { TColumn, Id, TTask } from '../types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import Task from './Task';
+import PlusIcon from '../icons/PlusIcon';
 
 interface ColumnProps {
   column: TColumn;
@@ -11,7 +12,6 @@ interface ColumnProps {
   createTask: (columnId: Id) => void;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, title: string) => void;
-  tasks: TTask[];
 }
 
 const Column = (props: ColumnProps) => {
@@ -20,19 +20,26 @@ const Column = (props: ColumnProps) => {
   const {
     column,
     deleteColumn,
-    tasks,
+
     updateColumn,
     createTask,
     deleteTask,
     updateTask,
   } = props;
   return (
-    <div className="bg-columnBackgroundColor w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col">
-      <div className="bg-mainBackgroundColor text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-4 border-columnBackgroundColor flex items-center justify-between">
-        <div className="flex gap-2" onClick={() => setEditing(true)}>
-          {!editing && column.title}
+    <div className="bg-baseBW w-[300px] h-[694px] rounded-[12px] flex flex-col p-3">
+      <div className="h-[20px] cursor-grab flex items-center justify-between gap-[14px]">
+        <div
+          className="flex  max-w-[199px] w-full  "
+          onClick={() => setEditing(true)}
+        >
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold italic">
+            {!editing && column.title}
+          </span>
+          {/* {!editing && column.title} */}
           {editing && (
             <input
+              className="max-w-[199px] w-full text-secondaryGray400 text-sm font-bold italic"
               value={column.title}
               autoFocus
               onBlur={() => setEditing(false)}
@@ -44,34 +51,37 @@ const Column = (props: ColumnProps) => {
             />
           )}
         </div>
-        <button
-          className="hover:stroke-white stroke-gray-500 px-1 py-2 hover:bg-columnBackgroundColor"
-          onClick={() => {
-            deleteColumn(column.id);
-          }}
-        >
-          <TrashIcon />
-        </button>
+        <div className="flex justify-center items-center gap-[4px] h-[20px] ">
+          <span className="px-[3px] py-[2px] rounded-[4px] bg-primaryBlue text-xs font-semibold">
+            {column.tasks.length}
+          </span>
+          <button
+            onClick={() => {
+              createTask(column.id);
+            }}
+          >
+            <img src="../src/icons/plus-blue.svg" alt="Plus icon" />
+          </button>
+          <button
+            onClick={() => {
+              deleteColumn(column.id);
+            }}
+          >
+            <img src="../src/icons/trash-can.svg" alt="Trash icon" />
+          </button>
+        </div>
       </div>
 
       <Droppable droppableId={column.id} type="task">
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
-            {tasks.map((task, index) => (
+            {column.tasks.map((task, index) => (
               <Draggable key={task.id} draggableId={task.id} index={index}>
                 {(provided) => (
                   <div
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
-                    style={{
-                      userSelect: 'none',
-                      padding: '16px',
-                      margin: '0 0 8px 0',
-                      minHeight: '50px',
-                      backgroundColor: 'lightblue',
-                      ...provided.draggableProps.style,
-                    }}
                   >
                     <Task
                       key={task.id}

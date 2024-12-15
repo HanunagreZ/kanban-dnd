@@ -3,14 +3,14 @@ import PlusIcon from '../icons/PlusIcon';
 import { TColumn, Id, TTask } from '../types';
 import Column from './Column';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
+import plus from '../icons/plus.svg';
 
 function Board() {
   const [columns, setColumns] = useLocalStorage<TColumn[]>(
     'kanban-columns',
     []
   );
-  const [tasks, setTasks] = useLocalStorage<TTask[]>('kanban-tasks', []);
 
   const onDragEnd = useCallback(
     (result: any) => {
@@ -28,50 +28,26 @@ function Board() {
         return;
       }
 
-      // const draggedTask = tasks.find((task) => task.id === draggableId);
-      // if (!draggedTask) return; // Если задача не найдена, ничего не делаем
+      setColumns((prevColumns) => {
+        const newColumns = [...columns];
 
-      // const startColumn = columns.find(
-      //   (column) => column.id === source.droppableId
-      // );
-      // const finishColumn = columns.find(
-      //   (column) => column.id === destination.droppableId
-      // );
+        const sourceColumn = newColumns.find(
+          (col) => col.id === source.droppableId
+        );
+        const destColumn = newColumns.find(
+          (col) => col.id === destination.droppableId
+        );
 
-      // if (startColumn === finishColumn) {
-      //   // Перетаскивание в пределах одной колонки
-      //   const newTasks = [...tasks];
-      //   const startTaskIndex = newTasks.findIndex(
-      //     (task) => task.id === draggedTask.id
-      //   );
-      //   const [removedTask] = newTasks.splice(startTaskIndex, 1);
-      //   newTasks.splice(destination.index, 0, removedTask);
+        if (!sourceColumn || !destColumn) return newColumns;
 
-      //   setTasks(newTasks);
-      // }
-      // } else {
-      //   if (!finishColumn) return;
-      //   // Перетаскивание в другую колонку
-      //   const newTasks = [...tasks];
-      //   const startTaskIndex = newTasks.findIndex(
-      //     (task) => task.id === draggedTask.id
-      //   );
-      //   const [removedTask] = newTasks.splice(startTaskIndex, 1);
-      //   newTasks.splice(destination.index, 0, {
-      //     ...removedTask,
-      //     columnId: finishColumn.id,
-      //   });
+        const [movedTask] = sourceColumn.tasks.splice(source.index, 1);
+        destColumn.tasks.splice(destination.index, 0, movedTask);
 
-      //   setTasks(newTasks);
-      // }
+        return newColumns;
+      });
     },
-    [columns, tasks, setColumns, setTasks]
+    [columns, setColumns]
   );
-
-  useEffect(() => {
-    localStorage.setItem('kanban-columns', JSON.stringify(columns));
-    localStorage.setItem('kanban-tasks', JSON.stringify(tasks));
-  }, [columns, tasks]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -86,7 +62,7 @@ function Board() {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                style={{ display: 'flex', flexDirection: 'row' }}
+                className="flex flex-row gap-[15px]"
               >
                 {columns.map((column, index) => (
                   <Draggable
@@ -108,9 +84,6 @@ function Board() {
                           createTask={createTask}
                           deleteTask={deleteTask}
                           updateTask={updateTask}
-                          tasks={tasks.filter(
-                            (task) => task.columnId === column.id
-                          )}
                         ></Column>
                       </div>
                     )}
@@ -123,23 +96,27 @@ function Board() {
 
           <button
             className="
-          h-[60px]
-          w-[350px]
-          min-w-[350px]
-          rounded-lg
-          bg-mainBackgroundColor
-          border-2
-          border-columnBackgroundColor
-          p-4
-          ring-rose-500
-          hover:ring-2
+          h-[42px]
+          w-[150px]
+          min-w-[150px] 
+          px-2
           flex
-          gap-2
+          items-center  
+          justify-between
+          cursor-pointer
+          text-xs
+          font-semibold
+          text-secondaryGray400
+          hover: rounded-md
+          hover:bg-secondaryGray800
+          ease-in-out 
+          duration-300
         "
             onClick={createNewColumn}
           >
-            <PlusIcon />
-            Add column
+            {/* <PlusIcon /> */}
+            <img src={plus} alt="" />
+            Добавить колонку
           </button>
         </div>
       </div>
@@ -150,6 +127,7 @@ function Board() {
     const newColumn: TColumn = {
       id: Date.now().toString(),
       title: `Column ${columns.length + 1}`,
+      tasks: [],
     };
 
     setColumns([...columns, newColumn]);
@@ -170,19 +148,36 @@ function Board() {
   function createTask(columnId: Id) {
     const newTask: TTask = {
       id: Date.now().toString(),
-      columnId,
       title: 'New task',
     };
 
-    setTasks([...tasks, newTask]);
+    setColumns(
+      columns.map((column) =>
+        column.id === columnId
+          ? { ...column, tasks: [...column.tasks, newTask] }
+          : column
+      )
+    );
   }
 
   function deleteTask(id: Id) {
-    setTasks(tasks.filter((task) => task.id !== id));
+    setColumns(
+      columns.map((column) => ({
+        ...column,
+        tasks: column.tasks.filter((task) => task.id !== id),
+      }))
+    );
   }
 
   function updateTask(id: Id, title: string) {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, title } : task)));
+    setColumns(
+      columns.map((column) => ({
+        ...column,
+        tasks: column.tasks.map((task) =>
+          task.id === id ? { ...task, title } : task
+        ),
+      }))
+    );
   }
 }
 
