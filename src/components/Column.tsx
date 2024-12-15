@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import TrashIcon from '../icons/TrashIcon';
 import { TColumn, Id, TTask } from '../types';
-import { Droppable } from 'react-beautiful-dnd';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import Task from './Task';
 
 interface ColumnProps {
@@ -54,14 +54,39 @@ const Column = (props: ColumnProps) => {
         </button>
       </div>
 
-      {tasks.map((task) => (
-        <Task
-          key={task.id}
-          task={task}
-          deleteTask={deleteTask}
-          updateTask={updateTask}
-        />
-      ))}
+      <Droppable droppableId={column.id} type="task">
+        {(provided) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            {tasks.map((task, index) => (
+              <Draggable key={task.id} draggableId={task.id} index={index}>
+                {(provided) => (
+                  <div
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    ref={provided.innerRef}
+                    style={{
+                      userSelect: 'none',
+                      padding: '16px',
+                      margin: '0 0 8px 0',
+                      minHeight: '50px',
+                      backgroundColor: 'lightblue',
+                      ...provided.draggableProps.style,
+                    }}
+                  >
+                    <Task
+                      key={task.id}
+                      task={task}
+                      deleteTask={deleteTask}
+                      updateTask={updateTask}
+                    />
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
       <button className="mt-auto" onClick={() => createTask(column.id)}>
         Add Task

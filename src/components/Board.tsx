@@ -2,7 +2,8 @@ import useLocalStorage from 'use-local-storage';
 import PlusIcon from '../icons/PlusIcon';
 import { TColumn, Id, TTask } from '../types';
 import Column from './Column';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useCallback, useEffect } from 'react';
 
 function Board() {
   const [columns, setColumns] = useLocalStorage<TColumn[]>(
@@ -11,23 +12,117 @@ function Board() {
   );
   const [tasks, setTasks] = useLocalStorage<TTask[]>('kanban-tasks', []);
 
+  const onDragEnd = useCallback(
+    (result: any) => {
+      const { destination, source, draggableId, type } = result;
+
+      // Если нет места назначения, ничего не делаем
+      if (!destination) return;
+
+      // Перетаскивание колонок
+      if (type === 'column') {
+        const newColumns = [...columns];
+        const [removed] = newColumns.splice(source.index, 1);
+        newColumns.splice(destination.index, 0, removed);
+        setColumns(newColumns);
+        return;
+      }
+
+      // const draggedTask = tasks.find((task) => task.id === draggableId);
+      // if (!draggedTask) return; // Если задача не найдена, ничего не делаем
+
+      // const startColumn = columns.find(
+      //   (column) => column.id === source.droppableId
+      // );
+      // const finishColumn = columns.find(
+      //   (column) => column.id === destination.droppableId
+      // );
+
+      // if (startColumn === finishColumn) {
+      //   // Перетаскивание в пределах одной колонки
+      //   const newTasks = [...tasks];
+      //   const startTaskIndex = newTasks.findIndex(
+      //     (task) => task.id === draggedTask.id
+      //   );
+      //   const [removedTask] = newTasks.splice(startTaskIndex, 1);
+      //   newTasks.splice(destination.index, 0, removedTask);
+
+      //   setTasks(newTasks);
+      // }
+      // } else {
+      //   if (!finishColumn) return;
+      //   // Перетаскивание в другую колонку
+      //   const newTasks = [...tasks];
+      //   const startTaskIndex = newTasks.findIndex(
+      //     (task) => task.id === draggedTask.id
+      //   );
+      //   const [removedTask] = newTasks.splice(startTaskIndex, 1);
+      //   newTasks.splice(destination.index, 0, {
+      //     ...removedTask,
+      //     columnId: finishColumn.id,
+      //   });
+
+      //   setTasks(newTasks);
+      // }
+    },
+    [columns, tasks, setColumns, setTasks]
+  );
+
+  useEffect(() => {
+    localStorage.setItem('kanban-columns', JSON.stringify(columns));
+    localStorage.setItem('kanban-tasks', JSON.stringify(tasks));
+  }, [columns, tasks]);
+
   return (
-    <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto px-[40px]">
-      <div className="m-auto flex gap-2">
-        {columns.map((column) => (
-          <Column
-            key={column.id}
-            column={column}
-            deleteColumn={deleteColumn}
-            updateColumn={updateColumn}
-            createTask={createTask}
-            deleteTask={deleteTask}
-            updateTask={updateTask}
-            tasks={tasks.filter((task) => task.columnId === column.id)}
-          ></Column>
-        ))}
-        <button
-          className="
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto px-[40px]">
+        <div className="m-auto flex gap-2">
+          <Droppable
+            droppableId="all-columns"
+            direction="horizontal"
+            type="column"
+          >
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={{ display: 'flex', flexDirection: 'row' }}
+              >
+                {columns.map((column, index) => (
+                  <Draggable
+                    key={column.id}
+                    draggableId={column.id}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+                      >
+                        <Column
+                          key={column.id}
+                          column={column}
+                          deleteColumn={deleteColumn}
+                          updateColumn={updateColumn}
+                          createTask={createTask}
+                          deleteTask={deleteTask}
+                          updateTask={updateTask}
+                          tasks={tasks.filter(
+                            (task) => task.columnId === column.id
+                          )}
+                        ></Column>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+
+          <button
+            className="
           h-[60px]
           w-[350px]
           min-w-[350px]
@@ -41,13 +136,14 @@ function Board() {
           flex
           gap-2
         "
-          onClick={createNewColumn}
-        >
-          <PlusIcon />
-          Add column
-        </button>
+            onClick={createNewColumn}
+          >
+            <PlusIcon />
+            Add column
+          </button>
+        </div>
       </div>
-    </div>
+    </DragDropContext>
   );
 
   function createNewColumn() {
