@@ -8,5 +8,5 @@ export type TColumn = {
 
 export type TTask = {
   id: Id;
-  title: string;
+  title: string; 
 };

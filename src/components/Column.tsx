@@ -93,7 +93,7 @@ const Column = (props: ColumnProps) => {
                   </div>
                 )}
               </Draggable>
-            ))}
+            ))} 
             {provided.placeholder}
           </div>
         )}

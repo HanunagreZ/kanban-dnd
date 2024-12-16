@@ -148,7 +148,7 @@ function Board() {
   function createTask(columnId: Id) {
     const newTask: TTask = {
       id: Date.now().toString(),
-      title: 'New task',
+      title: 'New task'
     };
 
     setColumns(

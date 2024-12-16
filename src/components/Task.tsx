@@ -27,7 +27,7 @@ const Task = (props: TaskProps) => {
     <AnimatePresence>
       {!isDeleted && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
+          initial={{ opacity: 1, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
           transition={{ duration: 0.3 }}
@@ -66,20 +66,6 @@ const Task = (props: TaskProps) => {
         </motion.div>
       )}
     </AnimatePresence>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
   );
 };
 
