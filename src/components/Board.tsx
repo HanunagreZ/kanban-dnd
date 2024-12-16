@@ -1,14 +1,13 @@
-import useLocalStorage from 'use-local-storage';
-import PlusIcon from '../icons/PlusIcon';
-import { TColumn, Id, TTask } from '../types';
-import Column from './Column';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { useCallback } from 'react';
-import plus from '../icons/plus.svg';
+import useLocalStorage from "use-local-storage";
+import { TColumn, Id, TTask } from "../types";
+import Column from "./Column";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useCallback } from "react";
+import plus from "../icons/plus.svg";
 
 function Board() {
   const [columns, setColumns] = useLocalStorage<TColumn[]>(
-    'kanban-columns',
+    "kanban-columns",
     []
   );
 
@@ -20,7 +19,7 @@ function Board() {
       if (!destination) return;
 
       // Перетаскивание колонок
-      if (type === 'column') {
+      if (type === "column") {
         const newColumns = [...columns];
         const [removed] = newColumns.splice(source.index, 1);
         newColumns.splice(destination.index, 0, removed);
@@ -114,8 +113,7 @@ function Board() {
         "
             onClick={createNewColumn}
           >
-            {/* <PlusIcon /> */}
-            <img src={plus} alt="" />
+            <img src={plus} alt="Plus icon" />
             Добавить колонку
           </button>
         </div>
@@ -148,7 +146,7 @@ function Board() {
   function createTask(columnId: Id) {
     const newTask: TTask = {
       id: Date.now().toString(),
-      title: 'New task'
+      title: "New task",
     };
 
     setColumns(
