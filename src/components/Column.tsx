@@ -20,14 +20,13 @@ const Column = (props: ColumnProps) => {
   const {
     column,
     deleteColumn,
-
     updateColumn,
     createTask,
     deleteTask,
     updateTask,
   } = props;
   return (
-    <div className="bg-baseBW w-[300px] h-[694px] rounded-[12px] flex flex-col p-3">
+    <div className="bg-baseBW w-[300px] h-[694px] rounded-[12px] flex flex-col p-3 gap-[12px]">
       <div className="h-[20px] cursor-grab flex items-center justify-between gap-[14px]">
         <div
           className="flex  max-w-[199px] w-full  "
@@ -74,7 +73,8 @@ const Column = (props: ColumnProps) => {
 
       <Droppable droppableId={column.id} type="task">
         {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
+          <div {...provided.droppableProps} ref={provided.innerRef}
+          className="flex flex-col gap-[10px] h-full  overflow-y-scroll">
             {column.tasks.map((task, index) => (
               <Draggable key={task.id} draggableId={task.id} index={index}>
                 {(provided) => (
@@ -82,6 +82,7 @@ const Column = (props: ColumnProps) => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
+                    
                   >
                     <Task
                       key={task.id}
@@ -97,10 +98,6 @@ const Column = (props: ColumnProps) => {
           </div>
         )}
       </Droppable>
-
-      <button className="mt-auto" onClick={() => createTask(column.id)}>
-        Add Task
-      </button>
     </div>
   );
 };

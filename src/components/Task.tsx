@@ -20,7 +20,7 @@ const Task = (props: TaskProps) => {
       onMouseEnter={() => setMouseIsOver(true)}
       onMouseLeave={() => setMouseIsOver(false)}
       onClick={() => setEditing(true)}
-      className="cursor-grab"
+      className="cursor-grab bg-black w-[276px] h-[216px]"
     >
       <span>#{task.id}</span>
       {!editing && task.title}
