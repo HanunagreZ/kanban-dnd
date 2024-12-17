@@ -1,8 +1,23 @@
 import useLocalStorage from "use-local-storage";
-import Column from "./Column"; 
+import Column from "./Column";
 import { TColumn, Id, TTask } from "../types";
-import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
-import { useCallback } from "react";
+import {
+  DragDropContext,
+  Draggable,
+  DragStart,
+  DragUpdate,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
+import { useCallback, useState } from "react";
+import { isEmpty } from "lodash";
+
+interface PlaceholderProps {
+  clientHeight?: number;
+  clientWidth?: number;
+  clientX?: number;
+  clientY?: number;
+}
 
 const Board = () => {
   const [columns, setColumns] = useLocalStorage<TColumn[]>(
@@ -10,8 +25,89 @@ const Board = () => {
     []
   );
 
+  const [placeholderProps, setPlaceholderProps] = useState<PlaceholderProps>({});
+  const queryAttr = "data-rbd-drag-handle-draggable-id";
+
+  const getDraggedDom = (draggableId: string) => {
+    const domQuery = `[${queryAttr}='${draggableId}']`;
+    return document.querySelector(domQuery);
+  };
+
+  const handleDragStart = (event: DragStart) => {
+    const draggedDOM = getDraggedDom(event.draggableId);
+    if (!draggedDOM) return;
+
+    const { clientHeight, clientWidth } = draggedDOM;
+    const sourceIndex = event.source.index;
+
+    const parentNode = draggedDOM.parentNode as HTMLElement;
+    const paddingTop = parseFloat(
+      window.getComputedStyle(parentNode).paddingTop
+    );
+
+    const clientY =
+      paddingTop +
+      Array.from(parentNode.children)
+        .slice(0, sourceIndex)
+        .reduce((total, curr) => {
+          const style = window.getComputedStyle(curr);
+          const marginBottom = parseFloat(style.marginBottom);
+          return total + curr.clientHeight + marginBottom;
+        }, 0);
+
+    setPlaceholderProps({
+      clientHeight,
+      clientWidth,
+      clientY,
+      clientX: parseFloat(window.getComputedStyle(parentNode).paddingLeft),
+    });
+  };
+
+  const handleDragUpdate = (event: DragUpdate) => {
+    if (!event.destination) {
+      setPlaceholderProps({});
+      return;
+    }
+
+    const draggedDOM = getDraggedDom(event.draggableId);
+    if (!draggedDOM) return;
+
+    const { clientHeight, clientWidth } = draggedDOM;
+    const destinationIndex = event.destination.index;
+
+    const parentNode = draggedDOM.parentNode as HTMLElement;
+
+    const children = Array.from(parentNode.children).filter(
+      (child) => !child.classList.contains("placeholder")
+    );
+
+    let clientY = 0;
+
+    if (destinationIndex < children.length) {
+      const destinationNode = children[destinationIndex];
+      clientY =
+        destinationNode.getBoundingClientRect().top -
+        parentNode.getBoundingClientRect().top;
+    } else {
+      const lastNode = children[children.length - 1];
+      clientY =
+        lastNode.getBoundingClientRect().bottom -
+        parentNode.getBoundingClientRect().top;
+    }
+
+    const clientX = event.destination.index * (clientWidth + 12);
+
+    setPlaceholderProps({
+      clientHeight,
+      clientWidth,
+      clientY,
+      clientX,
+    });
+  };
+
   const onDragEnd = useCallback(
     (result: DropResult) => {
+      setPlaceholderProps({});
       const { destination, source, type } = result;
 
       if (!destination) return;
@@ -46,7 +142,11 @@ const Board = () => {
   );
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext
+      onDragEnd={onDragEnd}
+      onDragStart={handleDragStart}
+      onDragUpdate={handleDragUpdate}
+    >
       <div className="m-auto flex min-h-screen w-full items-center px-[18px] py-[18px]">
         <div className="flex gap-2 self-start  overflow-x-auto">
           <Droppable
@@ -54,11 +154,11 @@ const Board = () => {
             direction="horizontal"
             type="column"
           >
-            {(provided) => (
+            {(provided, snapshot) => (
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="flex flex-row gap-[12px]"
+                className="flex flex-row gap-[12px] relative"
               >
                 {columns.map((column, index) => (
                   <Draggable
@@ -87,6 +187,19 @@ const Board = () => {
                 ))}
 
                 {provided.placeholder}
+                {!isEmpty(placeholderProps) && snapshot.isDraggingOver && (
+                  <div
+                    className="absolute border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 opacity-50 transition-all duration-200"
+                    style={{
+                      position: "absolute",
+                      top: placeholderProps.clientY,
+                      left: placeholderProps.clientX,
+                      height: placeholderProps.clientHeight,
+                      width: placeholderProps.clientWidth,
+                      pointerEvents: "none",
+                    }}
+                  />
+                )}
               </div>
             )}
           </Droppable>
