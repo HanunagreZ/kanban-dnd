@@ -68,22 +68,24 @@ const Board = () => {
       setPlaceholderProps({});
       return;
     }
-
+  
     const draggedDOM = getDraggedDom(event.draggableId);
     if (!draggedDOM) return;
-
+  
     const { clientHeight, clientWidth } = draggedDOM;
     const destinationIndex = event.destination.index;
-
+  
     const parentNode = draggedDOM.parentNode as HTMLElement;
-
+  
     const children = Array.from(parentNode.children).filter(
       (child) => !child.classList.contains("placeholder")
     );
-
+  
     let clientY = 0;
-
-    if (destinationIndex < children.length) {
+  
+    if (destinationIndex === event.source.index) {
+      clientY = parentNode.clientHeight - clientHeight;
+    } else if (destinationIndex < children.length) {
       const destinationNode = children[destinationIndex];
       clientY =
         destinationNode.getBoundingClientRect().top -
@@ -94,9 +96,9 @@ const Board = () => {
         lastNode.getBoundingClientRect().bottom -
         parentNode.getBoundingClientRect().top;
     }
-
+  
     const clientX = event.destination.index * (clientWidth + 12);
-
+  
     setPlaceholderProps({
       clientHeight,
       clientWidth,
