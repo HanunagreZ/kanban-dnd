@@ -179,7 +179,7 @@ const Board = () => {
                           updateColumn={updateColumn}
                           createTask={createTask}
                           deleteTask={deleteTask}
-                          updateTask={updateTask}
+                          updateTask={updateTask} 
                         ></Column>
                       </div>
                     )}

@@ -25,7 +25,7 @@ const Task = (props: TaskProps) => {
   return (
     <AnimatePresence>
       {!isDeleted && (
-        <motion.div
+        <motion.article
           initial={{ opacity: 1, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
@@ -38,12 +38,12 @@ const Task = (props: TaskProps) => {
               </span>
 
               {!editing && (
-                <span
+                <h2
                   onClick={() => setEditing(true)}
                   className="inline-block h-[45px] overflow-hidden text-ellipsis text-[12px] font-semibold leading-[15px] cursor-pointer"
                 >
                   {task.title}
-                </span>
+                </h2>
               )}
 
               {editing && (
@@ -170,7 +170,7 @@ const Task = (props: TaskProps) => {
               </span>
             </div>
           </div>
-        </motion.div>
+        </motion.article>
       )}
     </AnimatePresence>
   );

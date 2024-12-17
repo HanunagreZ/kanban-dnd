@@ -34,7 +34,7 @@ const Column = (props: ColumnProps) => {
   }, []);
 
   return (
-    <div className="bg-secondaryGray020 w-[300px] h-[694px] rounded-[12px] flex flex-col gap-[12px] relative">
+    <section className="bg-secondaryGray020 w-[300px] h-[694px] rounded-[12px] flex flex-col gap-[12px] relative">
       <div className="h-[20px] cursor-grab flex items-center justify-between gap-[14px] mt-[12px] px-[12px]">
         <div
           className="flex max-w-[199px] w-full h-[12px] "
@@ -48,9 +48,9 @@ const Column = (props: ColumnProps) => {
             />
           )}
 
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold leading-[12px] h-[14px]">
+          <h1 className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold leading-[12px] h-[14px]">
             {!editing && column.title}
-          </span>
+          </h1>
           {editing && (
             <input
               className="max-w-[199px] w-full text-secondaryGray400 text-sm font-bold italic"
@@ -133,7 +133,7 @@ const Column = (props: ColumnProps) => {
           </div>
         )}
       </Droppable>
-    </div>
+    </section>
   );
 
   function toggleDropdown() {
