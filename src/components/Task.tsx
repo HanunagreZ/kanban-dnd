@@ -56,7 +56,7 @@ const Task = (props: TaskProps) => {
               {!editing && (
                 <span
                   onClick={() => setEditing(true)}
-                  className="inline-block h-[45px] overflow-hidden text-ellipsis"
+                  className="inline-block h-[45px] overflow-hidden text-ellipsis text-[12px] font-semibold leading-[15px] cursor-pointer"
                 >
                   {task.title}
                 </span>
@@ -142,7 +142,7 @@ const Task = (props: TaskProps) => {
               </div>
             </div>
 
-            <div className="flex gap-[11.5px] items-center">
+            <div className="flex gap-[14px] items-center">
               <div className="flex gap-[2px] h-[14px] items-center">
                 <img src="../src/icons/calendar.svg" alt="Calendar icon" />
                 <span className="text-secondaryGray400 text-[11px] font-medium leading-[12px] font-helvetica">

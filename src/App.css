@@ -12,7 +12,3 @@ body,
 ::-webkit-scrollbar {
   width: 0px;
 }
-
-::-webkit-scrollbar-horizontal {
-  height: 10px;
-}

@@ -34,14 +34,14 @@ export default {
     },
   },
   plugins: [
-    function({ addComponents }) {
-      addComponents({
-        '[data-rbd-placeholder-context-id]': {
-          margin: '10px 0',
-          minHeight: '50px',
-          background: 'rgba(0, 0, 0, 0.1)',
-        },
-      })
-    },
+    // function({ addComponents }) {
+    //   addComponents({
+    //     '[data-rbd-placeholder-context-id]': {
+    //       margin: '10px 0',
+    //       minHeight: '50px',
+    //       background: 'rgba(0, 0, 0, 0.1)',
+    //     },
+    //   })
+    // },
   ],
 };

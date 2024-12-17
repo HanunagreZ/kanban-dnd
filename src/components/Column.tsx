@@ -49,17 +49,17 @@ const Column = (props: ColumnProps) => {
     <div className="bg-secondaryGray020 w-[300px] h-[694px] rounded-[12px] flex flex-col gap-[12px] relative">
       <div className="h-[20px] cursor-grab flex items-center justify-between gap-[14px] mt-[12px] px-[12px]">
         <div
-          className="flex max-w-[199px] w-full"
+          className="flex max-w-[199px] w-full h-[12px] "
           onClick={() => setEditing(true)}
         >
 
           {!editing && (
-            <img className="mr-[6px]" src="../src/icons/avatar.svg" alt="Column status icon"/>
+            <img className='mr-[8px]' src="../src/icons/avatar.svg" alt="Column status icon"/>
                
           )}  
 
 
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold italic leading-[12px]">
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold leading-[12px] h-[14px]">
             {!editing && column.title}
           </span>
           {editing && (
@@ -77,7 +77,7 @@ const Column = (props: ColumnProps) => {
           )}
         </div>
         <div className="flex justify-center items-center gap-[4px] h-[20px]">
-          <span className="px-[3px]   rounded-[4px] bg-primaryBlue text-xs font-semibold">
+          <span className="px-[3px]  rounded-[4px] bg-primaryBlue text-xs font-semibold">
             {column.tasks.length}
           </span>
           <button
@@ -128,6 +128,7 @@ const Column = (props: ColumnProps) => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
+                     
                   >
                     <Task
                       key={task.id}
@@ -139,7 +140,9 @@ const Column = (props: ColumnProps) => {
                 )}
               </Draggable>
             ))}
-            {provided.placeholder}
+           
+                {provided.placeholder}
+            
           </div>
         )}
       </Droppable>
