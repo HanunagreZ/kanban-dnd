@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TColumn, Id } from "../types";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import Task from "./Task";
+import { img } from "framer-motion/client";
 
 interface ColumnProps {
   column: TColumn;
@@ -15,6 +16,19 @@ interface ColumnProps {
 const Column = (props: ColumnProps) => {
   const [editing, setEditing] = useState(false);
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setIsDropdownOpen(false);
+    }
+  };
+
   const {
     column,
     deleteColumn,
@@ -23,14 +37,29 @@ const Column = (props: ColumnProps) => {
     deleteTask,
     updateTask,
   } = props;
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="bg-secondaryGray020 w-[300px] h-[694px] rounded-[12px] flex flex-col p-3 gap-[12px]">
-      <div className="h-[20px] cursor-grab flex items-center justify-between gap-[14px]">
+    <div className="bg-secondaryGray020 w-[300px] h-[694px] rounded-[12px] flex flex-col gap-[12px] relative">
+      <div className="h-[20px] cursor-grab flex items-center justify-between gap-[14px] mt-[12px] px-[12px]">
         <div
-          className="flex  max-w-[199px] w-full"
+          className="flex max-w-[199px] w-full"
           onClick={() => setEditing(true)}
         >
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold italic">
+
+          {!editing && (
+            <img className="mr-[6px]" src="../src/icons/avatar.svg" alt="Column status icon"/>
+               
+          )}  
+
+
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold italic leading-[12px]">
             {!editing && column.title}
           </span>
           {editing && (
@@ -47,11 +76,12 @@ const Column = (props: ColumnProps) => {
             />
           )}
         </div>
-        <div className="flex justify-center items-center gap-[4px] h-[20px] ">
-          <span className="px-[3px] py-[2px] rounded-[4px] bg-primaryBlue text-xs font-semibold">
+        <div className="flex justify-center items-center gap-[4px] h-[20px]">
+          <span className="px-[3px]   rounded-[4px] bg-primaryBlue text-xs font-semibold">
             {column.tasks.length}
           </span>
           <button
+            className="hover:bg-gray-200 rounded-[4px]"
             onClick={() => {
               createTask(column.id);
             }}
@@ -59,12 +89,28 @@ const Column = (props: ColumnProps) => {
             <img src="../src/icons/plus-blue.svg" alt="Plus icon" />
           </button>
           <button
-            onClick={() => {
-              deleteColumn(column.id);
-            }}
+            className="hover:bg-gray-200 rounded-[4px]"
+            onClick={toggleDropdown}
           >
-            <img src="../src/icons/trash-can.svg" alt="Trash icon" />
+            <img src="../src/icons/dots-blue.svg" alt="More icon" />
           </button>
+
+          {isDropdownOpen && (
+            <div
+              ref={dropdownRef}
+              className="absolute top-[36px] right-[12px] bg-white border border-gray-300 rounded-md shadow-md px-[6px] py-[2px] flex z-[2]"
+            >
+              <button
+                className=" text-secondaryGray400 text-[12px] font-bold"
+                onClick={() => {
+                  deleteColumn(column.id);
+                  setIsDropdownOpen(false);
+                }}
+              >
+                Удалить колонку
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

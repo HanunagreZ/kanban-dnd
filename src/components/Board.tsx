@@ -50,8 +50,8 @@ function Board() {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto px-[40px]">
-        <div className="m-auto flex gap-2">
+      <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto px-[18px] py-[18px]">
+        <div className="flex gap-2 self-start overflow-x-auto">
           <Droppable
             droppableId="all-columns"
             direction="horizontal"
@@ -61,7 +61,7 @@ function Board() {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="flex flex-row gap-[15px]"
+                className="flex flex-row gap-[12px]"
               >
                 {columns.map((column, index) => (
                   <Draggable

@@ -4,8 +4,13 @@ export default {
   theme: {
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
+      manrope: 'Manrope',
+      helvetica: 'Helvetica',
     },
     extend: {
+      boxShadow: {
+        custom: '0 0 10px 0 #D5E1F5',  
+      },
       colors: {
         mainBackgroundColor: '#0D1117',
         columnBackgroundColor: '#161C22',
@@ -23,7 +28,8 @@ export default {
         backgroundRed: "#F63F5026",
         textOrange: "#F1961A",
         backgroundOrange: "#F1961A26", 
-        cardStroke: "#E3E5E8"
+        cardStroke: "#E3E5E8",
+        cardShadow: "#D5E1F5"
       },
     },
   },
