@@ -1,8 +1,7 @@
 import useLocalStorage from "use-local-storage";
-import Column from "./Column";
-import plus from "../icons/plus.svg";
+import Column from "./Column"; 
 import { TColumn, Id, TTask } from "../types";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import { useCallback } from "react";
 
 const Board = () => {
@@ -12,8 +11,8 @@ const Board = () => {
   );
 
   const onDragEnd = useCallback(
-    (result: any) => {
-      const { destination, source, draggableId, type } = result;
+    (result: DropResult) => {
+      const { destination, source, type } = result;
 
       if (!destination) return;
 
@@ -25,7 +24,7 @@ const Board = () => {
         return;
       }
 
-      setColumns((prevColumns) => {
+      setColumns(() => {
         const newColumns = [...columns];
 
         const sourceColumn = newColumns.find(
@@ -48,8 +47,8 @@ const Board = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto px-[18px] py-[18px]">
-        <div className="flex gap-2 self-start overflow-x-auto">
+      <div className="m-auto flex min-h-screen w-full items-center px-[18px] py-[18px]">
+        <div className="flex gap-2 self-start  overflow-x-auto">
           <Droppable
             droppableId="all-columns"
             direction="horizontal"
@@ -114,7 +113,7 @@ const Board = () => {
         "
             onClick={createNewColumn}
           >
-            <img src={plus} alt="Plus icon" />
+            <img src={"/icons/plus.svg"} alt="Plus icon" />
             Добавить колонку
           </button>
         </div>

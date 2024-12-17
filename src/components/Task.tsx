@@ -13,7 +13,7 @@ const Task = (props: TaskProps) => {
   const [editing, setEditing] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -65,7 +65,7 @@ const Task = (props: TaskProps) => {
               className="hover:bg-gray-200 rounded-[4px] absolute top-[10px] right-[7px]"
               onClick={toggleDropdown}
             >
-              <img src="../src/icons/dots-gray.svg" alt="Dots more icon" />
+              <img src="/icons/dots-gray.svg" alt="Dots more icon" />
             </button>
 
             {isDropdownOpen && (
@@ -83,7 +83,7 @@ const Task = (props: TaskProps) => {
             )}
 
             <div className="flex gap-[4px] h-[16px]">
-              <img src="../src/icons/suitcase.svg" alt="Suitcase icon" />
+              <img src="/icons/suitcase.svg" alt="Suitcase icon" />
               <span className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-[12px] font-medium max-w-[134px]">
                 Проект с длиннннным названием
               </span>
@@ -98,28 +98,28 @@ const Task = (props: TaskProps) => {
 
             <div className="flex justify-between">
               <div className="flex gap-[3px] h-[14px] items-center">
-                <img src="../src/icons/subtasks.svg" alt="Subtasks icon" />
+                <img src="/icons/subtasks.svg" alt="Subtasks icon" />
                 <span className="text-secondaryGray400 text-[11px] font-medium leading-[12px] font-helvetica">
                   283
                 </span>
               </div>
 
               <div className="flex gap-[3px] h-[14px] items-center">
-                <img src="../src/icons/chat.svg" alt="Chat icon" />
+                <img src="/icons/chat.svg" alt="Chat icon" />
                 <span className="text-secondaryGray400 text-[11px] font-medium leading-[12px] font-helvetica">
                   21
                 </span>
               </div>
 
               <div className="flex gap-[3px] h-[14px] items-center">
-                <img src="../src/icons/time.svg" alt="Time icon" />
+                <img src="/icons/time.svg" alt="Time icon" />
                 <span className="text-secondaryGray400 text-[11px] font-medium leading-[12px] font-helvetica">
                   21.6
                 </span>
               </div>
 
               <div className="flex gap-[3px] h-[14px] items-center">
-                <img src="../src/icons/speed.svg" alt="Speed icon" />
+                <img src="/icons/speed.svg" alt="Speed icon" />
                 <span className="text-secondaryGray400 text-[11px] font-medium leading-[12px] font-helvetica">
                   162 / 131
                 </span>
@@ -128,21 +128,21 @@ const Task = (props: TaskProps) => {
 
             <div className="flex gap-[14px] items-center">
               <div className="flex gap-[2px] h-[14px] items-center">
-                <img src="../src/icons/calendar.svg" alt="Calendar icon" />
+                <img src="/icons/calendar.svg" alt="Calendar icon" />
                 <span className="text-secondaryGray400 text-[11px] font-medium leading-[12px] font-helvetica">
                   02.02
                 </span>
               </div>
 
               <div className="flex gap-[2px] h-[14px] items-center">
-                <img src="../src/icons/flag.svg" alt="Flag icon" />
+                <img src="/icons/flag.svg" alt="Flag icon" />
                 <span className="text-secondaryGray400 text-[11px] font-medium leading-[12px] font-helvetica">
                   24.04
                 </span>
               </div>
 
               <div className="flex gap-[2px] h-[14px] items-center">
-                <img src="../src/icons/fire.svg" alt="Fire icon" />
+                <img src="/icons/fire.svg" alt="Fire icon" />
                 <span className="text-secondaryGray400 text-[11px] font-medium leading-[12px] font-helvetica">
                   24.04
                 </span>
@@ -150,7 +150,7 @@ const Task = (props: TaskProps) => {
 
               <img
                 className="ml-auto"
-                src="../src/icons/profile-icon-stub.svg"
+                src="/icons/profile-icon-stub.svg"
                 alt="Profile icon stub"
               />
             </div>
@@ -185,8 +185,8 @@ const Task = (props: TaskProps) => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  function handleClickOutside(e) {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+  function handleClickOutside (e: MouseEvent) {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
       setIsDropdownOpen(false);
     }
   };

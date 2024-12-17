@@ -15,7 +15,7 @@ interface ColumnProps {
 const Column = (props: ColumnProps) => {
   const [editing, setEditing] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const {
     column,
@@ -43,7 +43,7 @@ const Column = (props: ColumnProps) => {
           {!editing && (
             <img
               className="mr-[8px]"
-              src="../src/icons/avatar.svg"
+              src="/icons/avatar.svg"
               alt="Column status icon"
             />
           )}
@@ -66,7 +66,7 @@ const Column = (props: ColumnProps) => {
           )}
         </div>
         <div className="flex justify-center items-center gap-[4px] h-[20px]">
-          <span className="px-[3px]  rounded-[4px] bg-primaryBlue text-xs font-semibold">
+          <span className="px-[3px] rounded-[4px] bg-primaryBlue text-xs font-semibold">
             {column.tasks.length}
           </span>
           <button
@@ -75,13 +75,13 @@ const Column = (props: ColumnProps) => {
               createTask(column.id);
             }}
           >
-            <img src="../src/icons/plus-blue.svg" alt="Plus icon" />
+            <img src="icons/plus-blue.svg" alt="Plus icon" />
           </button>
           <button
             className="hover:bg-gray-200 rounded-[4px]"
             onClick={toggleDropdown}
           >
-            <img src="../src/icons/dots-blue.svg" alt="More icon" />
+            <img src="/icons/dots-blue.svg" alt="More icon" />
           </button>
 
           {isDropdownOpen && (
@@ -140,8 +140,8 @@ const Column = (props: ColumnProps) => {
     setIsDropdownOpen(!isDropdownOpen);
   }
 
-  function handleClickOutside(e) {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+  function handleClickOutside(e: MouseEvent) {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
       setIsDropdownOpen(false);
     }
   }
