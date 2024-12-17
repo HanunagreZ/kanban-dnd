@@ -15,22 +15,6 @@ const Task = (props: TaskProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const handleDelete = () => {
-    setIsDropdownOpen(false);
-    setIsDeleted(true);
-    setTimeout(() => deleteTask(task.id), 300);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleClickOutside = (e) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-      setIsDropdownOpen(false);
-    }
-  };
-
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -190,6 +174,22 @@ const Task = (props: TaskProps) => {
       )}
     </AnimatePresence>
   );
+
+  function handleDelete() {
+    setIsDropdownOpen(false);
+    setIsDeleted(true);
+    setTimeout(() => deleteTask(task.id), 300);
+  };
+
+  function toggleDropdown() {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  function handleClickOutside(e) {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setIsDropdownOpen(false);
+    }
+  };
 };
 
 export default Task;

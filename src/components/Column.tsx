@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { TColumn, Id } from "../types";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import Task from "./Task";
-import { img } from "framer-motion/client";
 
 interface ColumnProps {
   column: TColumn;
@@ -15,19 +14,8 @@ interface ColumnProps {
 
 const Column = (props: ColumnProps) => {
   const [editing, setEditing] = useState(false);
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleClickOutside = (e) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-      setIsDropdownOpen(false);
-    }
-  };
 
   const {
     column,
@@ -52,12 +40,13 @@ const Column = (props: ColumnProps) => {
           className="flex max-w-[199px] w-full h-[12px] "
           onClick={() => setEditing(true)}
         >
-
           {!editing && (
-            <img className='mr-[8px]' src="../src/icons/avatar.svg" alt="Column status icon"/>
-               
-          )}  
-
+            <img
+              className="mr-[8px]"
+              src="../src/icons/avatar.svg"
+              alt="Column status icon"
+            />
+          )}
 
           <span className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold leading-[12px] h-[14px]">
             {!editing && column.title}
@@ -128,7 +117,6 @@ const Column = (props: ColumnProps) => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
-                     
                   >
                     <Task
                       key={task.id}
@@ -140,14 +128,23 @@ const Column = (props: ColumnProps) => {
                 )}
               </Draggable>
             ))}
-           
-                {provided.placeholder}
-            
+
+            {provided.placeholder}
           </div>
         )}
       </Droppable>
     </div>
   );
+
+  function toggleDropdown() {
+    setIsDropdownOpen(!isDropdownOpen);
+  }
+
+  function handleClickOutside(e) {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setIsDropdownOpen(false);
+    }
+  }
 };
 
 export default Column;

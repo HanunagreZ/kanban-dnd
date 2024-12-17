@@ -1,27 +1,22 @@
 import useLocalStorage from "use-local-storage";
-import { TColumn, Id, TTask } from "../types";
 import Column from "./Column";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useCallback, useState } from "react";
 import plus from "../icons/plus.svg";
-import React from "react";
+import { TColumn, Id, TTask } from "../types";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useCallback } from "react";
 
-function Board() {
+const Board = () => {
   const [columns, setColumns] = useLocalStorage<TColumn[]>(
     "kanban-columns",
     []
   );
 
- 
-
   const onDragEnd = useCallback(
     (result: any) => {
       const { destination, source, draggableId, type } = result;
 
-      // Если нет места назначения, ничего не делаем
       if (!destination) return;
 
-      // Перетаскивание колонок
       if (type === "column") {
         const newColumns = [...columns];
         const [removed] = newColumns.splice(source.index, 1);
@@ -51,42 +46,45 @@ function Board() {
     [columns, setColumns]
   );
 
-
- 
-
   return (
-    <DragDropContext onDragEnd={onDragEnd}  >
+    <DragDropContext onDragEnd={onDragEnd}>
       <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto px-[18px] py-[18px]">
         <div className="flex gap-2 self-start overflow-x-auto">
-        <Droppable droppableId="all-columns" direction="horizontal" type="column">
+          <Droppable
+            droppableId="all-columns"
+            direction="horizontal"
+            type="column"
+          >
             {(provided) => (
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="flex flex-row gap-[12px] relative"
+                className="flex flex-row gap-[12px]"
               >
                 {columns.map((column, index) => (
-                  
-
-                    <Draggable draggableId={column.id} index={index}>
-                      {(provided) => (
-                        <div
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          ref={provided.innerRef}
-                        >
-                          <Column
-                            key={column.id}
-                            column={column}
-                            deleteColumn={deleteColumn}
-                            updateColumn={updateColumn}
-                            createTask={createTask}
-                            deleteTask={deleteTask}
-                            updateTask={updateTask}
-                          />
-                        </div>
-                      )}
-                    </Draggable>
+                  <Draggable
+                    key={column.id}
+                    draggableId={column.id}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+                      >
+                        <Column
+                          key={column.id}
+                          column={column}
+                          deleteColumn={deleteColumn}
+                          updateColumn={updateColumn}
+                          createTask={createTask}
+                          deleteTask={deleteTask}
+                          updateTask={updateTask}
+                        ></Column>
+                      </div>
+                    )}
+                  </Draggable>
                 ))}
 
                 {provided.placeholder}
@@ -180,6 +178,6 @@ function Board() {
       }))
     );
   }
-}
+};
 
 export default Board;
