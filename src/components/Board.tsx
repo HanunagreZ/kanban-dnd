@@ -33,7 +33,7 @@ const Board = () => {
     return document.querySelector(domQuery);
   };
 
-  const handleDragStart = (event: DragStart) => {
+  const onDragStart = useCallback((event: DragStart) => {
     const draggedDOM = getDraggedDom(event.draggableId);
     if (!draggedDOM) return;
 
@@ -61,9 +61,9 @@ const Board = () => {
       clientY,
       clientX: parseFloat(window.getComputedStyle(parentNode).paddingLeft),
     });
-  };
+  }, []);
 
-  const handleDragUpdate = (event: DragUpdate) => {
+  const onDragUpdate = useCallback((event: DragUpdate) => {
     if (!event.destination) {
       setPlaceholderProps({});
       return;
@@ -103,7 +103,7 @@ const Board = () => {
       clientY,
       clientX,
     });
-  };
+  }, []);
 
   const onDragEnd = useCallback(
     (result: DropResult) => {
@@ -144,11 +144,11 @@ const Board = () => {
   return (
     <DragDropContext
       onDragEnd={onDragEnd}
-      onDragStart={handleDragStart}
-      onDragUpdate={handleDragUpdate}
+      onDragStart={onDragStart}
+      onDragUpdate={onDragUpdate}
     >
-      <div className="m-auto flex min-h-screen w-full items-center px-[18px] py-[18px]">
-        <div className="flex gap-2 self-start  overflow-x-auto">
+      <div className="m-auto flex min-h-screen w-full items-center px-[18px] py-[18px] ">
+        <div className="flex gap-2 self-start overflow-x-auto relative">
           <Droppable
             droppableId="all-columns"
             direction="horizontal"
@@ -158,7 +158,7 @@ const Board = () => {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="flex flex-row gap-[12px] relative"
+                className="flex flex-row gap-[12px] "
               >
                 {columns.map((column, index) => (
                   <Draggable
@@ -189,9 +189,9 @@ const Board = () => {
                 {provided.placeholder}
                 {!isEmpty(placeholderProps) && snapshot.isDraggingOver && (
                   <div
-                    className="absolute border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 opacity-50 transition-all duration-200"
+                    className="absolute border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 opacity-50 transition-all duration-200 pointer-events-none"
                     style={{
-                      position: "absolute",
+                      
                       top: placeholderProps.clientY,
                       left: placeholderProps.clientX,
                       height: placeholderProps.clientHeight,
