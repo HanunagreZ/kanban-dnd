@@ -1,23 +1,14 @@
 import useLocalStorage from "use-local-storage";
-import Column from "./Column";
-import { TColumn, Id, TTask } from "../types";
+import { TColumn, TPlaceholderProps } from "../../types";
 import {
   DragDropContext,
-  Draggable,
   DragStart,
   DragUpdate,
-  Droppable,
   DropResult,
 } from "react-beautiful-dnd";
 import { useCallback, useState } from "react";
-import { isEmpty } from "lodash";
-
-export interface IPlaceholderProps {
-  clientHeight?: number;
-  clientWidth?: number;
-  clientX?: number;
-  clientY?: number;
-}
+import AddColumnButton from "./AddColumnButton/AddColumnButton";
+import ColumnList from "./ColumnList/ColumnList";
 
 const Board = () => {
   const [columns, setColumns] = useLocalStorage<TColumn[]>(
@@ -25,9 +16,9 @@ const Board = () => {
     []
   );
   const [columnPlaceholderProps, setColumnPlaceholderProps] =
-    useState<IPlaceholderProps>({});
+    useState<TPlaceholderProps>({});
   const [taskPlaceholderProps, setTaskPlaceholderProps] =
-    useState<IPlaceholderProps>({});
+    useState<TPlaceholderProps>({});
 
   const onDragStart = useCallback((event: DragStart) => {
     const draggedDOM = document.querySelector(
@@ -228,69 +219,14 @@ const Board = () => {
     >
       <div className="m-auto flex min-h-screen w-full items-center px-[18px] py-[18px] ">
         <div className="flex gap-2 self-start overflow-x-auto relative">
-          <Droppable
-            droppableId="all-columns"
-            direction="horizontal"
-            type="column"
-          >
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="flex flex-row gap-[12px] "
-              >
-                {columns.map((column, index) => (
-                  <Draggable
-                    key={column.id}
-                    draggableId={column.id}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        ref={provided.innerRef}
-                      >
-                        <Column
-                          key={column.id}
-                          column={column}
-                          deleteColumn={deleteColumn}
-                          updateColumn={updateColumn}
-                          createTask={createTask}
-                          deleteTask={deleteTask}
-                          updateTask={updateTask}
-                          taskPlaceholderProps={taskPlaceholderProps}
-                        ></Column>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+          <ColumnList
+            columns={columns}
+            setColumns={setColumns}
+            columnPlaceholderProps={columnPlaceholderProps}
+            taskPlaceholderProps={taskPlaceholderProps}
+          />
 
-                {provided.placeholder}
-                {!isEmpty(columnPlaceholderProps) &&
-                  snapshot.isDraggingOver && (
-                    <div
-                      className="absolute border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 opacity-50 transition-all duration-200 pointer-events-none"
-                      style={{
-                        top: columnPlaceholderProps.clientY,
-                        left: columnPlaceholderProps.clientX,
-                        height: columnPlaceholderProps.clientHeight,
-                        width: columnPlaceholderProps.clientWidth,
-                        pointerEvents: "none",
-                      }}
-                    />
-                  )}
-              </div>
-            )}
-          </Droppable>
-
-          <button
-            className="h-[42px] w-[150px] min-w-[150px]  x-2 flex items-center justify-between cursor-pointer text-[12px] leading-[24px] font-semibold text-secondaryGray400 hover: rounded-md hover:bg-secondaryGray800 ease-in-out duration-300 ml-[6px]"
-            onClick={createNewColumn}
-          >
-            <img src={"/icons/plus.svg"} alt="Plus icon" />
-            Добавить колонку
-          </button>
+          <AddColumnButton createNewColumn={createNewColumn} />
         </div>
       </div>
     </DragDropContext>
@@ -304,53 +240,6 @@ const Board = () => {
     };
 
     setColumns([...columns, newColumn]);
-  }
-
-  function deleteColumn(id: Id) {
-    setColumns(columns.filter((column) => column.id !== id));
-  }
-
-  function updateColumn(id: Id, title: string) {
-    setColumns(
-      columns.map((column) =>
-        column.id === id ? { ...column, title } : column
-      )
-    );
-  }
-
-  function createTask(columnId: Id) {
-    const newTask: TTask = {
-      id: Date.now().toString(),
-      title: "New task",
-    };
-
-    setColumns(
-      columns.map((column) =>
-        column.id === columnId
-          ? { ...column, tasks: [...column.tasks, newTask] }
-          : column
-      )
-    );
-  }
-
-  function deleteTask(id: Id) {
-    setColumns(
-      columns.map((column) => ({
-        ...column,
-        tasks: column.tasks.filter((task) => task.id !== id),
-      }))
-    );
-  }
-
-  function updateTask(id: Id, title: string) {
-    setColumns(
-      columns.map((column) => ({
-        ...column,
-        tasks: column.tasks.map((task) =>
-          task.id === id ? { ...task, title } : task
-        ),
-      }))
-    );
   }
 };
 
