@@ -3,6 +3,7 @@ import { TColumn, Id } from "../types";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import Task from "./Task";
 import { isEmpty } from "lodash";
+import { IPlaceholderProps } from "./Board";
 
 interface ColumnProps {
   column: TColumn;
@@ -11,7 +12,7 @@ interface ColumnProps {
   createTask: (columnId: Id) => void;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, title: string) => void;
-  taskPlaceholderProps: any;
+  taskPlaceholderProps: IPlaceholderProps;
 }
 
 const Column = (props: ColumnProps) => {
@@ -142,7 +143,7 @@ const Column = (props: ColumnProps) => {
                   left: taskPlaceholderProps.clientX,
                   height: taskPlaceholderProps.clientHeight,
                   width: taskPlaceholderProps.clientWidth,
-                  pointerEvents: "none",
+                  pointerEvents: "none", 
                 }}
               />
             )}

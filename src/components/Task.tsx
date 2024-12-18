@@ -179,17 +179,20 @@ const Task = (props: TaskProps) => {
     setIsDropdownOpen(false);
     setIsDeleted(true);
     setTimeout(() => deleteTask(task.id), 300);
-  };
+  }
 
   function toggleDropdown() {
     setIsDropdownOpen(!isDropdownOpen);
-  };
+  }
 
-  function handleClickOutside (e: MouseEvent) {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+  function handleClickOutside(e: MouseEvent) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target as Node)
+    ) {
       setIsDropdownOpen(false);
     }
-  };
+  }
 };
 
 export default Task;

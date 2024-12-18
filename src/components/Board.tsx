@@ -12,7 +12,7 @@ import {
 import { useCallback, useState } from "react";
 import { isEmpty } from "lodash";
 
-interface PlaceholderProps {
+export interface IPlaceholderProps {
   clientHeight?: number;
   clientWidth?: number;
   clientX?: number;
@@ -25,9 +25,9 @@ const Board = () => {
     []
   );
   const [columnPlaceholderProps, setColumnPlaceholderProps] =
-    useState<PlaceholderProps>({});
+    useState<IPlaceholderProps>({});
   const [taskPlaceholderProps, setTaskPlaceholderProps] =
-    useState<PlaceholderProps>({});
+    useState<IPlaceholderProps>({});
 
   const onDragStart = useCallback((event: DragStart) => {
     const draggedDOM = document.querySelector(
@@ -80,7 +80,7 @@ const Board = () => {
       return;
     }
 
-    const { destination, draggableId, type } = event;
+    const { destination, draggableId, type, source } = event;
 
     const draggedDOM = document.querySelector(
       `[data-rbd-drag-handle-draggable-id='${draggableId}']`
@@ -89,14 +89,13 @@ const Board = () => {
 
     const { clientHeight, clientWidth } = draggedDOM;
     const destinationIndex = event.destination.index;
-    const parentNode = draggedDOM.parentNode as HTMLElement;
 
-    const children = Array.from(parentNode.children).filter(
-      (child) => !child.classList.contains("placeholder")
-    );
-    let clientY = 0;
-
-    if (event.type === "column") {
+    if (type === "column") {
+      const parentNode = draggedDOM.parentNode as HTMLElement;
+      const children = Array.from(parentNode.children).filter(
+        (child) => !child.classList.contains("placeholder")
+      );
+      let clientY = 0;
       if (destinationIndex === event.source.index) {
         clientY = parentNode.clientHeight - clientHeight;
       } else if (destinationIndex < children.length) {
@@ -110,8 +109,7 @@ const Board = () => {
           lastNode.getBoundingClientRect().bottom -
           parentNode.getBoundingClientRect().top;
       }
-
-      const clientX = event.destination.index * (clientWidth + 12);
+      const clientX = destinationIndex * (clientWidth + 12);
 
       setColumnPlaceholderProps({
         clientHeight,
@@ -119,50 +117,68 @@ const Board = () => {
         clientY,
         clientX,
       });
+      return;
     }
-
-    const droppableParent = document.querySelector(
-      `[data-rbd-droppable-id='${destination.droppableId}']`
-    ) as HTMLElement;
-
-    if (!droppableParent) return;
 
     if (type === "task") {
       const droppableParent = document.querySelector(
         `[data-rbd-droppable-id='${destination.droppableId}']`
       ) as HTMLElement;
-  
+
       if (!droppableParent) return;
+
       const children = Array.from(droppableParent.children).filter(
-        (child) => !child.classList.contains("placeholder")
+        (child) =>
+          !child.classList.contains("placeholder") &&
+          child.getAttribute("data-rbd-drag-handle-draggable-id") !==
+            draggableId
       );
-  
+
       let clientY = 0;
-  
+
       if (children.length === 0 || destinationIndex === 0) {
         clientY = 0;
-      } else if (destinationIndex >= children.length) {
-        const lastChild = children[children.length - 1] as HTMLElement;
-        const lastChildStyle = window.getComputedStyle(lastChild);
-  
-        clientY =
-          lastChild.offsetTop +
-          lastChild.offsetHeight +
-          parseFloat(lastChildStyle.marginBottom || "0");
       } else {
-        const destinationChild = children[destinationIndex] as HTMLElement;
-        const destinationChildStyle = window.getComputedStyle(destinationChild);
-  
-        clientY =
-          destinationChild.offsetTop -
-          parseFloat(destinationChildStyle.marginTop || "0");
+        if (
+          destination.droppableId === source.droppableId &&
+          destination.index > source.index
+        ) {
+          if (destinationIndex >= children.length) {
+            const lastChild = children[children.length - 1] as HTMLElement;
+            const lastChildStyle = window.getComputedStyle(lastChild);
+
+            clientY =
+              lastChild.offsetTop +
+              lastChild.offsetHeight +
+              parseFloat(lastChildStyle.marginBottom || "0");
+          } else {
+            const destinationChild = children[destinationIndex] as HTMLElement;
+            clientY = destinationChild.offsetTop;
+          }
+        } else {
+          if (destinationIndex >= children.length) {
+            const lastChild = children[children.length - 1] as HTMLElement;
+            const lastChildStyle = window.getComputedStyle(lastChild);
+
+            clientY =
+              lastChild.offsetTop +
+              lastChild.offsetHeight +
+              parseFloat(lastChildStyle.marginBottom || "0");
+          } else {
+            const destinationChild = children[destinationIndex] as HTMLElement;
+            const destinationChildStyle =
+              window.getComputedStyle(destinationChild);
+            clientY =
+              destinationChild.offsetTop -
+              parseFloat(destinationChildStyle.marginTop || "0");
+          }
+        }
       }
-  
       setTaskPlaceholderProps({
         clientHeight,
         clientWidth,
         clientY,
-        clientX: 0, 
+        clientX: 0,
       });
     }
   }, []);
@@ -269,25 +285,7 @@ const Board = () => {
           </Droppable>
 
           <button
-            className="
-          h-[42px]
-          w-[150px]
-          min-w-[150px] 
-          px-2
-          flex
-          items-center  
-          justify-between
-          cursor-pointer
-          text-[12px]
-          leading-[24px]
-          font-semibold
-          text-secondaryGray400
-          hover: rounded-md
-          hover:bg-secondaryGray800
-          ease-in-out 
-          duration-300
-          ml-[6px]
-        "
+            className="h-[42px] w-[150px] min-w-[150px]  x-2 flex items-center justify-between cursor-pointer text-[12px] leading-[24px] font-semibold text-secondaryGray400 hover: rounded-md hover:bg-secondaryGray800 ease-in-out duration-300 ml-[6px]"
             onClick={createNewColumn}
           >
             <img src={"/icons/plus.svg"} alt="Plus icon" />

@@ -1,4 +1,5 @@
-У меня есть компонент: 
+Привет!
+Мне нужна помощь. У меня некорректно работает отображение плейсхолдера для Task если я взаимодействую с той же колонкой, в которой эта задача была расположена. Видимый плейсхолдер либо чуть ниже того места, где располагается невидимый, либо вообще наслаивается на существующую карточку.  Для других колонок всё корректно. Вот код двух компонентов. Помоги пожалуйста!
 
 import useLocalStorage from "use-local-storage";
 import Column from "./Column";
@@ -26,17 +27,15 @@ const Board = () => {
     "kanban-columns",
     []
   );
-
-  const [placeholderProps, setPlaceholderProps] = useState<PlaceholderProps>({});
-  const queryAttr = "data-rbd-drag-handle-draggable-id";
-
-  const getDraggedDom = (draggableId: string) => {
-    const domQuery = `[${queryAttr}='${draggableId}']`;
-    return document.querySelector(domQuery);
-  };
+  const [columnPlaceholderProps, setColumnPlaceholderProps] =
+    useState<PlaceholderProps>({});
+  const [taskPlaceholderProps, setTaskPlaceholderProps] =
+    useState<PlaceholderProps>({});
 
   const onDragStart = useCallback((event: DragStart) => {
-    const draggedDOM = getDraggedDom(event.draggableId);
+    const draggedDOM = document.querySelector(
+      `[data-rbd-drag-handle-draggable-id='${event.draggableId}']`
+    );
     if (!draggedDOM) return;
 
     const { clientHeight, clientWidth } = draggedDOM;
@@ -45,6 +44,9 @@ const Board = () => {
     const parentNode = draggedDOM.parentNode as HTMLElement;
     const paddingTop = parseFloat(
       window.getComputedStyle(parentNode).paddingTop
+    );
+    const paddingLeft = parseFloat(
+      window.getComputedStyle(parentNode).paddingLeft
     );
 
     const clientY =
@@ -57,61 +59,121 @@ const Board = () => {
           return total + curr.clientHeight + marginBottom;
         }, 0);
 
-    setPlaceholderProps({
-      clientHeight,
-      clientWidth,
-      clientY,
-      clientX: parseFloat(window.getComputedStyle(parentNode).paddingLeft),
-    });
+    if (event.type === "column") {
+      setColumnPlaceholderProps({
+        clientHeight,
+        clientWidth,
+        clientY,
+        clientX: paddingLeft,
+      });
+    } else if (event.type === "task") {
+      setTaskPlaceholderProps({
+        clientHeight,
+        clientWidth,
+        clientY,
+        clientX: paddingLeft,
+      });
+    }
   }, []);
 
   const onDragUpdate = useCallback((event: DragUpdate) => {
     if (!event.destination) {
-      setPlaceholderProps({});
+      setColumnPlaceholderProps({});
+      setTaskPlaceholderProps({});
       return;
     }
-  
-    const draggedDOM = getDraggedDom(event.draggableId);
+
+    const { destination, draggableId, type } = event;
+
+    const draggedDOM = document.querySelector(
+      `[data-rbd-drag-handle-draggable-id='${draggableId}']`
+    );
     if (!draggedDOM) return;
-  
+
     const { clientHeight, clientWidth } = draggedDOM;
     const destinationIndex = event.destination.index;
-  
     const parentNode = draggedDOM.parentNode as HTMLElement;
-  
+
     const children = Array.from(parentNode.children).filter(
       (child) => !child.classList.contains("placeholder")
     );
-  
     let clientY = 0;
-  
-    if (destinationIndex === event.source.index) {
-      clientY = parentNode.clientHeight - clientHeight;
-    } else if (destinationIndex < children.length) {
-      const destinationNode = children[destinationIndex];
-      clientY =
-        destinationNode.getBoundingClientRect().top -
-        parentNode.getBoundingClientRect().top;
-    } else {
-      const lastNode = children[children.length - 1];
-      clientY =
-        lastNode.getBoundingClientRect().bottom -
-        parentNode.getBoundingClientRect().top;
+
+    if (event.type === "column") {
+      if (destinationIndex === event.source.index) {
+        clientY = parentNode.clientHeight - clientHeight;
+      } else if (destinationIndex < children.length) {
+        const destinationNode = children[destinationIndex];
+        clientY =
+          destinationNode.getBoundingClientRect().top -
+          parentNode.getBoundingClientRect().top;
+      } else {
+        const lastNode = children[children.length - 1];
+        clientY =
+          lastNode.getBoundingClientRect().bottom -
+          parentNode.getBoundingClientRect().top;
+      }
+
+      const clientX = event.destination.index * (clientWidth + 12);
+
+      setColumnPlaceholderProps({
+        clientHeight,
+        clientWidth,
+        clientY,
+        clientX,
+      });
     }
+
+    const droppableParent = document.querySelector(
+      `[data-rbd-droppable-id='${destination.droppableId}']`
+    ) as HTMLElement;
+
+    if (!droppableParent) return;
+
+    if (type === "task") {
+      const droppableParent = document.querySelector(
+        `[data-rbd-droppable-id='${destination.droppableId}']`
+      ) as HTMLElement;
   
-    const clientX = event.destination.index * (clientWidth + 12);
+      if (!droppableParent) return;
+      const children = Array.from(droppableParent.children).filter(
+        (child) => !child.classList.contains("placeholder")
+      );
   
-    setPlaceholderProps({
-      clientHeight,
-      clientWidth,
-      clientY,
-      clientX,
-    });
+      let clientY = 0;
+  
+      if (children.length === 0 || destinationIndex === 0) {
+        clientY = 0;
+      } else if (destinationIndex >= children.length) {
+        const lastChild = children[children.length - 1] as HTMLElement;
+        const lastChildStyle = window.getComputedStyle(lastChild);
+  
+        clientY =
+          lastChild.offsetTop +
+          lastChild.offsetHeight +
+          parseFloat(lastChildStyle.marginBottom || "0");
+      } else {
+        const destinationChild = children[destinationIndex] as HTMLElement;
+        const destinationChildStyle = window.getComputedStyle(destinationChild);
+  
+        clientY =
+          destinationChild.offsetTop -
+          parseFloat(destinationChildStyle.marginTop || "0");
+      }
+  
+      setTaskPlaceholderProps({
+        clientHeight,
+        clientWidth,
+        clientY,
+        clientX: 0, 
+      });
+    }
   }, []);
 
   const onDragEnd = useCallback(
     (result: DropResult) => {
-      setPlaceholderProps({});
+      setColumnPlaceholderProps({});
+      setTaskPlaceholderProps({});
       const { destination, source, type } = result;
 
       if (!destination) return;
@@ -183,7 +245,8 @@ const Board = () => {
                           updateColumn={updateColumn}
                           createTask={createTask}
                           deleteTask={deleteTask}
-                          updateTask={updateTask} 
+                          updateTask={updateTask}
+                          taskPlaceholderProps={taskPlaceholderProps}
                         ></Column>
                       </div>
                     )}
@@ -191,19 +254,19 @@ const Board = () => {
                 ))}
 
                 {provided.placeholder}
-                {!isEmpty(placeholderProps) && snapshot.isDraggingOver && (
-                  <div
-                    className="absolute border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 opacity-50 transition-all duration-200 pointer-events-none"
-                    style={{
-                      
-                      top: placeholderProps.clientY,
-                      left: placeholderProps.clientX,
-                      height: placeholderProps.clientHeight,
-                      width: placeholderProps.clientWidth,
-                      pointerEvents: "none",
-                    }}
-                  />
-                )}
+                {!isEmpty(columnPlaceholderProps) &&
+                  snapshot.isDraggingOver && (
+                    <div
+                      className="absolute border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 opacity-50 transition-all duration-200 pointer-events-none"
+                      style={{
+                        top: columnPlaceholderProps.clientY,
+                        left: columnPlaceholderProps.clientX,
+                        height: columnPlaceholderProps.clientHeight,
+                        width: columnPlaceholderProps.clientWidth,
+                        pointerEvents: "none",
+                      }}
+                    />
+                  )}
               </div>
             )}
           </Droppable>
@@ -298,12 +361,11 @@ const Board = () => {
 
 export default Board;
 
-В нем реализована логика визуального отображение placeholder колонки. Она корректно отображается. И есть компонент колонки, в которой есть задачи. 
-
 import { useEffect, useRef, useState } from "react";
 import { TColumn, Id } from "../types";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import Task from "./Task";
+import { isEmpty } from "lodash";
 
 interface ColumnProps {
   column: TColumn;
@@ -312,6 +374,7 @@ interface ColumnProps {
   createTask: (columnId: Id) => void;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, title: string) => void;
+  taskPlaceholderProps: any;
 }
 
 const Column = (props: ColumnProps) => {
@@ -326,6 +389,7 @@ const Column = (props: ColumnProps) => {
     createTask,
     deleteTask,
     updateTask,
+    taskPlaceholderProps,
   } = props;
 
   useEffect(() => {
@@ -406,11 +470,11 @@ const Column = (props: ColumnProps) => {
       </div>
 
       <Droppable droppableId={column.id} type="task">
-        {(provided) => (
+        {(provided, snapshot) => (
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className="flex flex-col gap-[10px] h-full overflow-y-auto"
+            className="flex flex-col gap-[10px] h-full overflow-y-auto relative"
           >
             {column.tasks.map((task, index) => (
               <Draggable key={task.id} draggableId={task.id} index={index}>
@@ -419,6 +483,7 @@ const Column = (props: ColumnProps) => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
+                    className="relative"
                   >
                     <Task
                       key={task.id}
@@ -432,6 +497,18 @@ const Column = (props: ColumnProps) => {
             ))}
 
             {provided.placeholder}
+            {!isEmpty(taskPlaceholderProps) && snapshot.isDraggingOver && (
+              <div
+                className="absolute border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 opacity-50 transition-all duration-200 pointer-events-none"
+                style={{
+                  top: taskPlaceholderProps.clientY,
+                  left: taskPlaceholderProps.clientX,
+                  height: taskPlaceholderProps.clientHeight,
+                  width: taskPlaceholderProps.clientWidth,
+                  pointerEvents: "none",
+                }}
+              />
+            )}
           </div>
         )}
       </Droppable>
@@ -443,12 +520,13 @@ const Column = (props: ColumnProps) => {
   }
 
   function handleClickOutside(e: MouseEvent) {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target as Node)
+    ) {
       setIsDropdownOpen(false);
     }
   }
 };
 
 export default Column;
-
-Для задач нужно реализовать похожий функционал визуального отображения плейсхолдера задачи. Но тут дела обстоят сложнее. Нужно как-то учитывать положение плейсхолодера в колонке (то есть он он должен занимать корректное положение по вертикали в пределах колонки). А также нужно учитывать, что задача может быть перемещена в другую колонку. И там тоже могут быть задачи. Все разы, что я пробовал - не получалось. Либо плейсхолдер задачи отображался всегда в конце колонки и не двигался никак! Илиломалась логика плейсхолдера колонки. Помоги с этой задачей. Не надо писать весь код двух компонентов - напиши более кратко, только то, что нужно изменить или добавить
