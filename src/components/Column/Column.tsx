@@ -1,6 +1,7 @@
-import { TColumn, Id, TPlaceholderProps } from "../../types";
-import ColumnHeader from "./ColumnHeader/ColumnHeader";
-import TaskList from "./TaskList/TaskList";
+import { TColumn, Id, TPlaceholderProps } from "@/types";
+
+import ColumnHeader from "@column/ColumnHeader/ColumnHeader";
+import TaskList from "@column/TaskList/TaskList";
 
 interface IColumnProps {
   column: TColumn;

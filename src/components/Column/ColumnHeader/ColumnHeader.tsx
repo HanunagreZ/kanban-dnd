@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Id, TColumn } from "../../../types";
+
+import { Id, TColumn } from "@/types";
 
 interface IColumnHeaderProps {
   column: TColumn;
@@ -14,6 +15,7 @@ const ColumnHeader = (props: IColumnHeaderProps) => {
   const [editing, setEditing] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -36,20 +38,21 @@ const ColumnHeader = (props: IColumnHeaderProps) => {
           />
         )}
 
-        <h1 className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold leading-[12px] h-[14px]">
+        <h2 className="overflow-hidden text-ellipsis whitespace-nowrap text-secondaryGray400 text-sm font-bold leading-[12px] h-[14px]">
           {!editing && column.title}
-        </h1>
+        </h2>
         {editing && (
           <input
-            className="max-w-[199px] w-full text-secondaryGray400 text-sm font-bold italic"
+            className="max-w-[199px] w-full text-secondaryGray400 text-sm font-bold italic py-[8px] pl-[4px] relative bottom-[2px]"
             value={column.title}
             autoFocus
+            ref={inputRef}
             onBlur={() => setEditing(false)}
             onKeyDown={(e) => {
               if (e.key !== "Enter") return;
               setEditing(false);
             }}
-            onChange={(e) => updateColumn(column.id, e.target.value)}
+            onChange={(e) => updateColumn(column.id, e.target.value)} 
           />
         )}
       </div>
@@ -63,13 +66,13 @@ const ColumnHeader = (props: IColumnHeaderProps) => {
             createTask(column.id);
           }}
         >
-          <img src="icons/plus-blue.svg" alt="Plus icon" />
+          <img src="icons/plus-blue.svg" alt="Plus icon" className="min-h-[20px] min-w-[20px]"/>
         </button>
         <button
           className="hover:bg-gray-200 rounded-[4px]"
           onClick={toggleDropdown}
         >
-          <img src="/icons/dots-blue.svg" alt="More icon" />
+          <img src="/icons/dots-blue.svg" alt="More icon" className="min-h-[20px] min-w-[20px]" />
         </button>
 
         {isDropdownOpen && (
@@ -102,6 +105,12 @@ const ColumnHeader = (props: IColumnHeaderProps) => {
       !dropdownRef.current.contains(e.target as Node)
     ) {
       setIsDropdownOpen(false);
+    }
+    if (
+      inputRef.current &&
+      !inputRef.current.contains(e.target as Node)
+    ) {
+      setEditing(false);
     }
   }
 };

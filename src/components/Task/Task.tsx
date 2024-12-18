@@ -1,11 +1,14 @@
-import { Id, TTask } from "../../types";
 import { useEffect, useRef, useState } from "react";
+
+import { Id, TTask } from "@/types";
+
 import { motion, AnimatePresence } from "framer-motion";
-import TaskHeader from "./TaskHeader/TaskHeader";
-import TaskDropdown from "./TaskDropdown/TaskDropdown";
-import TaskMeta from "./TaskMeta/TaskMeta";
-import TaskDates from "./TaskDates/TaskDates";
-import TaskLabels from "./TaskLabels/TaskLabels";
+
+import TaskHeader from "@task/TaskHeader/TaskHeader";
+import TaskDropdown from "@task/TaskDropdown/TaskDropdown";
+import TaskMeta from "@task/TaskMeta/TaskMeta";
+import TaskDates from "@task/TaskDates/TaskDates";
+import TaskLabels from "@task/TaskLabels/TaskLabels";
 
 interface ITaskProps {
   task: TTask;

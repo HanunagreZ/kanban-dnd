@@ -8,7 +8,7 @@ export type TColumn = {
 
 export type TTask = {
   id: Id;
-  title: string; 
+  title: string;
 };
 
 export type TPlaceholderProps = {
@@ -16,4 +16,31 @@ export type TPlaceholderProps = {
   clientWidth?: number;
   clientX?: number;
   clientY?: number;
-}
+};
+
+type TTaskDate = {
+  id: number;
+  imgSrc: string;
+  imgAlt: string;
+  date: string;
+};
+
+export type TTaskDates = TTaskDate[];
+
+type TTaskLabel = {
+  id: number;
+  textColor: string;
+  backgroundColor: string;
+  label: string;
+};
+
+export type TTaskLabels = TTaskLabel[];
+
+type TTaskMeta = {
+  id: number;
+  imgSrc: string;
+  imgAlt: string;
+  meta: string;
+};  
+
+export type TTaskMetaData = TTaskMeta[];

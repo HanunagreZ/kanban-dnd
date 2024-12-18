@@ -1,7 +1,10 @@
+import { TColumn, TPlaceholderProps, TTask } from "@/types";
+
 import { Droppable, Draggable, Id } from "react-beautiful-dnd";
+
 import { isEmpty } from "lodash";
-import { TColumn, TPlaceholderProps, TTask } from "../../../types";
-import Column from "../../Column/Column";
+
+import Column from "@/components/Column/Column";
 
 interface IColumnListProps {
   columns: TColumn[];

@@ -1,17 +1,21 @@
 import { useEffect, useRef } from "react";
 
-interface TaskDropdownProps {
+interface ITaskDropdownProps {
   isDropdownOpen: boolean;
   setIsDropdownOpen: (value: boolean) => void;
   handleDelete: () => void;
 }
 
-const TaskDropdown = ({ isDropdownOpen, setIsDropdownOpen, handleDelete }: TaskDropdownProps) => {
+const TaskDropdown = (props: ITaskDropdownProps) => {
+  const { isDropdownOpen, setIsDropdownOpen, handleDelete } = props;
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };

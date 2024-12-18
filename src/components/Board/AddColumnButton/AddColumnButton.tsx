@@ -1,8 +1,8 @@
-interface CreateColumnButtonProps {
+interface ICreateColumnButtonProps {
   createNewColumn: () => void;
 }
 
-const AddColumnButton = (props: CreateColumnButtonProps) => {
+const AddColumnButton = (props: ICreateColumnButtonProps) => {
   const { createNewColumn } = props;
 
   return (
