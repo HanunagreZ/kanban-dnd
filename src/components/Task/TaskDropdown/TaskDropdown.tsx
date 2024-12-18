@@ -11,17 +11,9 @@ const TaskDropdown = (props: ITaskDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setIsDropdownOpen(false);
-      }
-    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setIsDropdownOpen]);
+  }, []);
 
   if (!isDropdownOpen) return null;
 
@@ -38,6 +30,15 @@ const TaskDropdown = (props: ITaskDropdownProps) => {
       </button>
     </div>
   );
+
+  function handleClickOutside(e: MouseEvent) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target as Node)
+    ) {
+      setIsDropdownOpen(false);
+    }
+  };
 };
 
 export default TaskDropdown;

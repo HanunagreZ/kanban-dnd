@@ -52,7 +52,7 @@ const ColumnHeader = (props: IColumnHeaderProps) => {
               if (e.key !== "Enter") return;
               setEditing(false);
             }}
-            onChange={(e) => updateColumn(column.id, e.target.value)} 
+            onChange={(e) => updateColumn(column.id, e.target.value)}
           />
         )}
       </div>
@@ -66,13 +66,21 @@ const ColumnHeader = (props: IColumnHeaderProps) => {
             createTask(column.id);
           }}
         >
-          <img src="icons/plus-blue.svg" alt="Plus icon" className="min-h-[20px] min-w-[20px]"/>
+          <img
+            src="icons/plus-blue.svg"
+            alt="Plus icon"
+            className="min-h-[20px] min-w-[20px]"
+          />
         </button>
         <button
           className="hover:bg-gray-200 rounded-[4px]"
           onClick={toggleDropdown}
         >
-          <img src="/icons/dots-blue.svg" alt="More icon" className="min-h-[20px] min-w-[20px]" />
+          <img
+            src="/icons/dots-blue.svg"
+            alt="More icon"
+            className="min-h-[20px] min-w-[20px]"
+          />
         </button>
 
         {isDropdownOpen && (
@@ -106,10 +114,7 @@ const ColumnHeader = (props: IColumnHeaderProps) => {
     ) {
       setIsDropdownOpen(false);
     }
-    if (
-      inputRef.current &&
-      !inputRef.current.contains(e.target as Node)
-    ) {
+    if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
       setEditing(false);
     }
   }

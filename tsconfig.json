@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    "strict": true, // Включает все строгие проверки TypeScript
-    "noImplicitAny": true, // Запрещает неявное использование типа 'any'
-    "noImplicitThis": true, // Вызывает ошибку при неявном использовании 'this' 
-    "strictNullChecks": true, // Строгая проверка на null и undefined
-    "strictFunctionTypes": true, // Более строгая проверка типов функций
-    "strictPropertyInitialization": true, // Убедиться, что свойства класса инициализированы
-    "noUnusedLocals": true, // Сообщает об неиспользуемых локальных переменных
-    "noUnusedParameters": true, // Сообщает о неиспользуемых параметрах функций
-    "noImplicitReturns": true, // Требует явного возврата из всех путей выполнения функции
-    "noFallthroughCasesInSwitch": true, // Предотвращает случайное прохождение через case в switch
-    "esModuleInterop": true, // Улучшает совместимость с CommonJS модулями
-    "allowSyntheticDefaultImports": true, // Позволяет использовать синтетические импорты по умолчаниюб,
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -28,5 +28,5 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ],
+  ]
 }

@@ -20,4 +20,3 @@ export const taskDatesData = <TTaskDates>[
     date: "24.04",
   },
 ];
-

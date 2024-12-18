@@ -22,7 +22,7 @@ const TaskHeader = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  });
 
   return (
     <div className="flex flex-col gap-[8px]">
