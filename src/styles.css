@@ -1,0 +1,18 @@
+@import "@/fonts.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  @apply bg-black text-white box-border;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 20px;
+  background-color: #8f96a3;
+}
