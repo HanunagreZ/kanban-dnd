@@ -1,50 +1,42 @@
-# React + TypeScript + Vite
+# Kanban-board
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Данный проект реализован для демонстрации функционала библиотеки react-beautiful-dnd.
 
-Currently, two official plugins are available:
+![Шот 369](https://github.com/user-attachments/assets/250da6db-d2c8-4f43-b523-4ca35fb687ff)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Описание
 
-## Expanding the ESLint configuration
+Приложение представляет собой десктопную версию Kanban-доски. Можно создавать, удалять, переименовывать, менять местами колонки. Создавать, удалять, переименовывать, менять местами карточки. Карточки представлены фиксированным шаблоном. Реализован функционал хранения данных в localStorage. Для карточек и колонок применяется видимый placeholder.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Технологии
 
-- Configure the top-level `parserOptions` property like this:
+* **React:**  
+* **Vite:**   
+* **TypeScript:**   
+* **Tailwind CSS**
+* **Framer Motion** (анимация создания и удаления карточки)
+* **use-local-storage** 
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Установка
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+1. **Клонируйте репозиторий:**
+   
+   git clone https://github.com/HanunagreZ/kanban-dnd.git
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+   Перейдите в склонированную папку
+   
+3. **Установите зависимости:**
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+   npm install
+
+4. **Запуск проекта в режиме разработки:**
+   
+   npm run dev
+   
+   Откройте http://localhost:5173 (или адрес, указанный в консоли) в вашем браузере.
+
+6. **Сборка проекта:**
+
+   npm run build
+   
+   Собранные файлы будут находиться в папке dist.
