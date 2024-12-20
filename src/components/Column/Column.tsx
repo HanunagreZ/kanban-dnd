@@ -25,7 +25,7 @@ const Column = (props: IColumnProps) => {
   } = props;
 
   return (
-    <section className="bg-secondaryGray020 w-[300px] h-[694px] rounded-[12px] flex flex-col gap-[12px] relative">
+    <section className="bg-secondaryGray020 w-[300px] h-[694px] rounded-[12px] flex flex-col relative">
       <ColumnHeader
         column={column}
         updateColumn={updateColumn}

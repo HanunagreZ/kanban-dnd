@@ -22,7 +22,7 @@ const TaskList = (props: ITaskListProps) => {
         <div
           {...provided.droppableProps}
           ref={provided.innerRef}
-          className="flex flex-col gap-[10px] h-full overflow-y-auto relative"
+          className="flex flex-col gap-[10px] h-full overflow-y-auto relative pt-[12px]"
         >
           {column.tasks.map((task, index) => (
             <Draggable key={task.id} draggableId={task.id} index={index}>
@@ -51,8 +51,9 @@ const TaskList = (props: ITaskListProps) => {
               style={{
                 top: taskPlaceholderProps.clientY,
                 left: taskPlaceholderProps.clientX,
-                height: taskPlaceholderProps.clientHeight,
-                width: taskPlaceholderProps.clientWidth,
+                height: taskPlaceholderProps.clientHeight - 10,
+                width: taskPlaceholderProps.clientWidth - 20,
+                transform: `translate(10px, 0)`,
                 pointerEvents: "none",
               }}
             />
