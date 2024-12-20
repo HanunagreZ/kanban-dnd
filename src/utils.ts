@@ -128,7 +128,7 @@ export function calculateTaskPlaceholderPosition(
   let clientY = 0;
 
   if (children.length === 0 || destinationIndex === 0) {
-    clientY = 0;
+    clientY = 15;
   } else {
     if (
       destinationDroppableId === sourceDroppableId &&

@@ -56,7 +56,7 @@ const ColumnList = (props: IColumnListProps) => {
                 top: columnPlaceholderProps.clientY,
                 left: columnPlaceholderProps.clientX,
                 height: columnPlaceholderProps.clientHeight,
-                width: columnPlaceholderProps.clientWidth,
+                width: columnPlaceholderProps.clientWidth! - 12,
                 pointerEvents: "none",
               }}
             />

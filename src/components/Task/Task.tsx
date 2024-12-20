@@ -33,11 +33,11 @@ const Task = (props: ITaskProps) => {
   return (
     <AnimatePresence>
       {!isDeleted && (
-        <motion.article
+        <motion.section
           initial={{ opacity: 1, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.3 }} 
         >
           <div className="cursor-grab bg-baseBW w-[276px] h-[216px] relative rounded-[6px] py-[10px] pl-[12px] pr-[16px] text-secondaryGray600 text-[11px] font-medium flex flex-col gap-[8px] border-[1px] border-cardStroke box-border shadow-custom mx-auto margin border-l-[4px] border-l-textRed">
             <TaskHeader task={task} editing={editing} setEditing={setEditing} updateTask={updateTask} />
@@ -54,7 +54,7 @@ const Task = (props: ITaskProps) => {
             <TaskDates />
             <TaskLabels />
           </div>
-        </motion.article>
+        </motion.section>
       )}
     </AnimatePresence>
   );
