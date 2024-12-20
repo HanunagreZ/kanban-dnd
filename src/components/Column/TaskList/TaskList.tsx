@@ -51,8 +51,8 @@ const TaskList = (props: ITaskListProps) => {
               style={{
                 top: taskPlaceholderProps.clientY,
                 left: taskPlaceholderProps.clientX,
-                height: taskPlaceholderProps.clientHeight - 10,
-                width: taskPlaceholderProps.clientWidth - 20,
+                height: taskPlaceholderProps.clientHeight! - 10,
+                width: taskPlaceholderProps.clientWidth! - 20,
                 transform: `translate(10px, 0)`,
                 pointerEvents: "none",
               }}
